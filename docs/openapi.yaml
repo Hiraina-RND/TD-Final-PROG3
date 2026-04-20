@@ -61,6 +61,36 @@ paths:
         "422":
           description: Business rules not satisfied
 
+  /collectivities/{collectivityId}/contributions:
+    post:
+      summary: Record a contribution
+      description: Record a contribution made by a member to a collectivity. Can be periodic (monthly or annual) or exceptional.
+      parameters:
+        - name: collectivityId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateContributionRequest"
+      responses:
+        "201":
+          description: Contribution successfully recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContributionResponse"
+        "400":
+          description: Invalid request
+        "403":
+          description: Unauthorized (only treasurer allowed)
+        "422":
+          description: Business rules not satisfied
+
 components:
   schemas:
     CreateCollectivityRequest:
@@ -202,3 +232,72 @@ components:
         transaction_reference:
           type: string
           description: Proof of 50,000 MGA payment (mobile money or bank transfer reference)
+
+    CreateContributionRequest:
+      type: object
+      required:
+        - member_id
+        - amount
+        - payment_method
+        - type
+      properties:
+        member_id:
+          type: integer
+          description: Member who made the contribution
+        amount:
+          type: number
+          format: double
+        payment_method:
+          type: string
+          enum:
+            - CASH
+            - BANK_TRANSFER
+            - MOBILE_MONEY
+        type:
+          type: string
+          enum:
+            - MONTHLY
+            - ANNUAL
+            - EXCEPTIONAL
+        transaction_reference:
+          type: string
+          description: Required for bank transfer or mobile money
+        receipt_number:
+          type: string
+          description: Required for cash payment
+        description:
+          type: string
+          description: Reason for exceptional contribution
+
+    ContributionResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        member_id:
+          type: integer
+        collectivity_id:
+          type: integer
+        amount:
+          type: number
+        payment_method:
+          type: string
+          enum:
+            - CASH
+            - BANK_TRANSFER
+            - MOBILE_MONEY
+        type:
+          type: string
+          enum:
+            - MONTHLY
+            - ANNUAL
+            - EXCEPTIONAL
+        transaction_reference:
+          type: string
+          nullable: true
+        receipt_number:
+          type: string
+          nullable: true
+        collected_at:
+          type: string
+          format: date-time
