@@ -259,6 +259,21 @@ components:
             - MONTHLY
             - ANNUAL
             - EXCEPTIONAL
+        payment_provider:
+          type: string
+          enum:
+            - MVOLA
+            - ORANGE_MONEY
+            - AIRTEL_MONEY
+            - BRED
+            - MCB
+            - BMOI
+            - BOA
+            - BGFI
+            - AFG
+            - ACCES_BANQUE
+            - BAOBAB
+            - SIPEM
         transaction_reference:
           type: string
           description: Required for bank transfer or mobile money
@@ -292,6 +307,21 @@ components:
             - MONTHLY
             - ANNUAL
             - EXCEPTIONAL
+        payment_provider:
+          type: string
+          enum:
+            - MVOLA
+            - ORANGE_MONEY
+            - AIRTEL_MONEY
+            - BRED
+            - MCB
+            - BMOI
+            - BOA
+            - BGFI
+            - AFG
+            - ACCES_BANQUE
+            - BAOBAB
+            - SIPEM
         transaction_reference:
           type: string
           nullable: true
