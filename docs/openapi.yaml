@@ -60,6 +60,7 @@ components:
         - last_name
         - birth_date
         - gender
+        - address
         - phone_number
         - occupation
       properties:
@@ -114,6 +115,9 @@ components:
           type: string
         agricultural_speciality:
           type: string
+        created_at:
+          type: string
+          format: date
         members:
           type: array
           items:
