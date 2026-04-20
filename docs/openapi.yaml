@@ -31,6 +31,36 @@ paths:
         "422":
           description: Business rules not satisfied
 
+  /collectivities/{collectivityId}/members:
+    post:
+      summary: Add a new member to a collectivity
+      description: Add a new member if sponsorship and payment conditions are satisfied.
+      parameters:
+        - name: collectivityId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMemberRequest"
+      responses:
+        "201":
+          description: Member successfully added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MemberWithRoleResponse"
+        "400":
+          description: Invalid request
+        "403":
+          description: Sponsorship or payment invalid
+        "422":
+          description: Business rules not satisfied
+
 components:
   schemas:
     CreateCollectivityRequest:
@@ -156,3 +186,19 @@ components:
           $ref: "#/components/schemas/MemberResponse"
         role:
           type: string
+
+    CreateMemberRequest:
+      type: object
+      required:
+        - member
+        - sponsor_id
+        - transaction_reference
+      properties:
+        member:
+          $ref: "#/components/schemas/MemberInput"
+        sponsor_id:
+          type: integer
+          description: Must be a member with > 90 days seniority
+        transaction_reference:
+          type: string
+          description: Proof of 50,000 MGA payment (mobile money or bank transfer reference)
