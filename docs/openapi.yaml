@@ -1,0 +1,154 @@
+openapi: 3.0.3
+info:
+  title: Agricultural Federation API
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000
+
+paths:
+  /collectivities:
+    post:
+      summary: Create a new collectivity
+      description: Create a collectivity with its initial members and their roles.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCollectivityRequest"
+      responses:
+        "201":
+          description: Collectivity successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CollectivityResponse"
+        "400":
+          description: Invalid request
+        "403":
+          description: Federation authorization denied
+        "422":
+          description: Business rules not satisfied
+
+components:
+  schemas:
+    CreateCollectivityRequest:
+      type: object
+      required:
+        - name
+        - city
+        - agricultural_speciality
+        - members
+      properties:
+        name:
+          type: string
+        city:
+          type: string
+        agricultural_speciality:
+          type: string
+        members:
+          type: array
+          minItems: 10
+          items:
+            $ref: "#/components/schemas/MemberWithRoleInput"
+
+    MemberInput:
+      type: object
+      required:
+        - first_name
+        - last_name
+        - birth_date
+        - gender
+        - phone_number
+        - occupation
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        birth_date:
+          type: string
+          format: date
+        gender:
+          type: string
+          enum:
+            - male
+            - female
+        address:
+          type: string
+        phone_number:
+          type: string
+        email:
+          type: string
+          format: email
+        occupation:
+          type: string
+
+    MemberWithRoleInput:
+      type: object
+      required:
+        - member
+        - role
+      properties:
+        member:
+          $ref: "#/components/schemas/MemberInput"
+        role:
+          type: string
+          enum:
+            - PRESIDENT
+            - PRESIDENT_ADJOINT
+            - TREASURER
+            - SECRETARY
+            - CONFIRMED_MEMBER
+            - JUNIOR_MEMBER
+
+    CollectivityResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        city:
+          type: string
+        agricultural_speciality:
+          type: string
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/MemberWithRoleResponse"
+
+    MemberResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        birth_date:
+          type: string
+          format: date
+        gender:
+          type: string
+        address:
+          type: string
+        phone_number:
+          type: string
+        email:
+          type: string
+        occupation:
+          type: string
+        join_date:
+          type: string
+          format: date
+
+    MemberWithRoleResponse:
+      type: object
+      properties:
+        member:
+          $ref: "#/components/schemas/MemberResponse"
+        role:
+          type: string
