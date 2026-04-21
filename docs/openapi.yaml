@@ -34,7 +34,9 @@ paths:
   /collectivities/{collectivityId}/members:
     post:
       summary: Add a new member to a collectivity
-      description: Add a new member if sponsorship and payment conditions are satisfied.
+      description: >
+        Add a new member to a collectivity under updated admission rules requiring at least two confirmed sponsors, including their relationship to the candidate.
+        The candidate must also pay a 50,000 Ar membership fee and the full annual contribution defined by the collectivity.
       parameters:
         - name: collectivityId
           in: path
@@ -53,7 +55,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MemberWithRoleResponse"
+                $ref: "#/components/schemas/MemberAdmissionResponse"
         "400":
           description: Invalid request
         "403":
@@ -432,37 +434,130 @@ components:
         role:
           type: string
 
+    MemberAdmissionResponse:
+      type: object
+      properties:
+        member:
+          $ref: "#/components/schemas/MemberWithRoleResponse"
+        collectivity_id:
+          type: integer
+        sponsors:
+          type: array
+          minItems: 2
+          items:
+            type: object
+            properties:
+              member_id:
+                type: integer
+              collectivity_id:
+                type: integer
+              relation:
+                type: string
+        payment:
+          type: object
+          properties:
+            membership_payment_status:
+              type: string
+              enum: [ PAID, FAILED, PENDING ]
+            annual_payment_status:
+              type: string
+              enum: [ PAID, FAILED, PENDING ]
+        admission_status:
+          type: string
+          enum: [ APPROVED, REJECTED ]
+
     CreateMemberRequest:
       type: object
       required:
         - member
-        - sponsor_id
-        - payment_provider
-        - transaction_reference
+        - sponsors
+        - payment
       properties:
         member:
           $ref: "#/components/schemas/MemberInput"
-        sponsor_id:
-          type: integer
-          description: Must be a member with > 90 days seniority
-        payment_provider:
-          type: string
-          enum:
-            - MVOLA
-            - ORANGE_MONEY
-            - AIRTEL_MONEY
-            - BRED
-            - MCB
-            - BMOI
-            - BOA
-            - BGFI
-            - AFG
-            - ACCES_BANQUE
-            - BAOBAB
-            - SIPEM
-        transaction_reference:
-          type: string
-          description: Proof of 50,000 MGA payment (mobile money or bank transfer reference)
+        sponsors:
+          type: array
+          minItems: 2
+          description: At least 2 confirmed members must sponsor the candidate.
+            Sponsors must belong to collectivities and include relation type.
+          items:
+            type: object
+            required:
+              - member_id
+              - collectivity_id
+              - relation
+            properties:
+              member_id:
+                type: integer
+              collectivity_id:
+                type: integer
+              relation:
+                type: string
+                enum:
+                  - FAMILY
+                  - FRIEND
+                  - COLLEAGUE
+                  - OTHER
+        payment:
+          type: object
+          required:
+            - membership_payment
+            - annual_payment
+          properties:
+            membership_payment:
+              type: object
+              required:
+                - amount
+                - payment_provider
+                - transaction_reference
+              properties:
+                amount:
+                  type: integer
+                  example: 50000
+                payment_provider:
+                  type: string
+                  enum:
+                    - MVOLA
+                    - ORANGE_MONEY
+                    - AIRTEL_MONEY
+                    - BRED
+                    - MCB
+                    - BMOI
+                    - BOA
+                    - BGFI
+                    - AFG
+                    - ACCES_BANQUE
+                    - BAOBAB
+                    - SIPEM
+                transaction_reference:
+                  type: string
+            annual_payment:
+              type: object
+              required:
+                - amount
+                - payment_provider
+                - transaction_reference
+              properties:
+                amount:
+                  type: integer
+                  description: Must match collectivity annual fee
+                payment_provider:
+                  type: string
+                  enum:
+                    - MVOLA
+                    - ORANGE_MONEY
+                    - AIRTEL_MONEY
+                    - BRED
+                    - MCB
+                    - BMOI
+                    - BOA
+                    - BGFI
+                    - AFG
+                    - ACCES_BANQUE
+                    - BAOBAR
+                    - SIPEM
+                transaction_reference:
+                  type: string
 
     CreateContributionRequest:
       type: object
