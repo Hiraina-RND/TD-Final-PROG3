@@ -91,6 +91,89 @@ paths:
         "422":
           description: Business rules not satisfied
 
+  /accounts:
+    post:
+      summary: Create a new account
+      description: Create an account for a collectivity or the federation.
+        Each entity (federation or collectivity) can have multiple bank accounts
+        and multiple mobile money accounts, but only one cash account is allowed.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAccountRequest"
+            examples:
+              cash_federation:
+                value:
+                  type: CASH
+                  owner_type: FEDERATION
+                  holder_name: Federation Cash Box
+              bank_collectivity:
+                value:
+                  type: BANK_TRANSFER
+                  owner_type: COLLECTIVITY
+                  collectivity_id: 10
+                  holder_name: Rice Farmers Group Account
+                  bank_name: BRED
+                  bank_account_number: "12345678901234567890123"
+              mobile_money_collectivity:
+                value:
+                  type: MOBILE_MONEY
+                  owner_type: COLLECTIVITY
+                  collectivity_id: 10
+                  holder_name: Mobile Wallet Group
+                  mobile_money_provider: MVOLA
+                  phone_number: "0340000000"
+      responses:
+        "201":
+          description: Account created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountResponse"
+              examples:
+                cash_federation:
+                  summary: Cash account for federation
+                  value:
+                    id: 1
+                    type: CASH
+                    owner_type: FEDERATION
+                    collectivity_id: null
+                    holder_name: Federation Cash Box
+                    balance: 0
+                    currency: MGA
+                bank_collectivity:
+                  summary: Bank account for a collectivity
+                  value:
+                    id: 2
+                    type: BANK_TRANSFER
+                    owner_type: COLLECTIVITY
+                    collectivity_id: 10
+                    holder_name: Rice Farmers Group Account
+                    balance: 0
+                    currency: MGA
+                    bank_name: BRED
+                    bank_account_number: "12345678901234567890123"
+                mobile_money_collectivity:
+                  summary: Mobile money account for a collectivity
+                  value:
+                    id: 3
+                    type: MOBILE_MONEY
+                    owner_type: COLLECTIVITY
+                    collectivity_id: 10
+                    holder_name: Mobile Wallet Group
+                    balance: 0
+                    currency: MGA
+                    mobile_money_provider: MVOLA
+                    phone_number: "0340000000"
+        "400":
+          description: Invalid request
+        "403":
+          description: Unauthorized (only treasurer allowed)
+        "422":
+          description: Business rules not satisfied
+
 components:
   schemas:
     CreateCollectivityRequest:
@@ -222,6 +305,7 @@ components:
       required:
         - member
         - sponsor_id
+        - payment_provider
         - transaction_reference
       properties:
         member:
@@ -229,6 +313,21 @@ components:
         sponsor_id:
           type: integer
           description: Must be a member with > 90 days seniority
+        payment_provider:
+          type: string
+          enum:
+            - MVOLA
+            - ORANGE_MONEY
+            - AIRTEL_MONEY
+            - BRED
+            - MCB
+            - BMOI
+            - BOA
+            - BGFI
+            - AFG
+            - ACCES_BANQUE
+            - BAOBAB
+            - SIPEM
         transaction_reference:
           type: string
           description: Proof of 50,000 MGA payment (mobile money or bank transfer reference)
@@ -331,3 +430,206 @@ components:
         collected_at:
           type: string
           format: date-time
+
+    CreateAccountRequest:
+      oneOf:
+        - $ref: "#/components/schemas/CreateCashAccount"
+        - $ref: "#/components/schemas/CreateBankAccount"
+        - $ref: "#/components/schemas/CreateMobileMoneyAccount"
+      discriminator:
+        propertyName: type
+        mapping:
+          CASH: "#/components/schemas/CreateCashAccount"
+          BANK_TRANSFER: "#/components/schemas/CreateBankAccount"
+          MOBILE_MONEY: "#/components/schemas/CreateMobileMoneyAccount"
+
+    AccountResponse:
+      oneOf:
+        - $ref: "#/components/schemas/CashAccountResponse"
+        - $ref: "#/components/schemas/BankAccountResponse"
+        - $ref: "#/components/schemas/MobileMoneyAccountResponse"
+      discriminator:
+        propertyName: type
+        mapping:
+          CASH: "#/components/schemas/CashAccountResponse"
+          BANK_TRANSFER: "#/components/schemas/BankAccountResponse"
+          MOBILE_MONEY: "#/components/schemas/MobileMoneyAccountResponse"
+
+    CreateCashAccount:
+      type: object
+      required:
+        - type
+        - owner_type
+        - holder_name
+      properties:
+        type:
+          type: string
+          enum:
+            - CASH
+        owner_type:
+          type: string
+          enum:
+            - FEDERATION
+            - COLLECTIVITY
+        collectivity_id:
+          type: integer
+        holder_name:
+          type: string
+        balance:
+          type: number
+          default: 0
+        currency:
+          type: string
+          default: MGA
+
+    CreateBankAccount:
+      type: object
+      required:
+        - type
+        - owner_type
+        - holder_name
+        - bank_name
+        - bank_account_number
+      properties:
+        type:
+          type: string
+          enum:
+            - BANK_TRANSFER
+        owner_type:
+          type: string
+          enum:
+            - FEDERATION
+            - COLLECTIVITY
+        collectivity_id:
+          type: integer
+        holder_name:
+          type: string
+        balance:
+          type: number
+          default: 0
+        currency:
+          type: string
+          default: MGA
+        bank_name:
+          type: string
+          enum:
+            - BRED
+            - MCB
+            - BMOI
+            - BOA
+            - BGFI
+            - AFG
+            - ACCES_BANQUE
+            - BAOBAB
+            - SIPEM
+        bank_account_number:
+          type: string
+          pattern: "^[0-9]{23}$"
+
+    CreateMobileMoneyAccount:
+      type: object
+      required:
+        - type
+        - owner_type
+        - holder_name
+        - mobile_money_provider
+        - phone_number
+      properties:
+        type:
+          type: string
+          enum:
+            - MOBILE_MONEY
+        owner_type:
+          type: string
+          enum:
+            - FEDERATION
+            - COLLECTIVITY
+        collectivity_id:
+          type: integer
+        holder_name:
+          type: string
+        balance:
+          type: number
+          default: 0
+        currency:
+          type: string
+          default: MGA
+        mobile_money_provider:
+          type: string
+          enum:
+            - ORANGE_MONEY
+            - MVOLA
+            - AIRTEL_MONEY
+        phone_number:
+          type: string
+
+    CashAccountResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum:
+            - CASH
+        owner_type:
+          type: string
+        collectivity_id:
+          type: integer
+          nullable: true
+        holder_name:
+          type: string
+        balance:
+          type: number
+        currency:
+          type: string
+
+    BankAccountResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum:
+            - BANK_TRANSFER
+        owner_type:
+          type: string
+        collectivity_id:
+          type: integer
+          nullable: true
+        holder_name:
+          type: string
+        balance:
+          type: number
+        currency:
+          type: string
+        bank_name:
+          type: string
+        bank_account_number:
+          type: string
+
+    MobileMoneyAccountResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum:
+           - MOBILE_MONEY
+        owner_type:
+          type: string
+        collectivity_id:
+          type: integer
+          nullable: true
+        holder_name:
+          type: string
+        balance:
+          type: number
+        currency:
+          type: string
+        mobile_money_provider:
+          type: string
+        phone_number:
+          type: string
