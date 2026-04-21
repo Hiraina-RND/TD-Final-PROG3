@@ -305,6 +305,7 @@ components:
       required:
         - member
         - sponsor_id
+        - payment_provider
         - transaction_reference
       properties:
         member:
@@ -312,6 +313,21 @@ components:
         sponsor_id:
           type: integer
           description: Must be a member with > 90 days seniority
+        payment_provider:
+          type: string
+          enum:
+            - MVOLA
+            - ORANGE_MONEY
+            - AIRTEL_MONEY
+            - BRED
+            - MCB
+            - BMOI
+            - BOA
+            - BGFI
+            - AFG
+            - ACCES_BANQUE
+            - BAOBAB
+            - SIPEM
         transaction_reference:
           type: string
           description: Proof of 50,000 MGA payment (mobile money or bank transfer reference)
