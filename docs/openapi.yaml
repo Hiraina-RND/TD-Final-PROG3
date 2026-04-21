@@ -264,6 +264,48 @@ paths:
         "422":
           description: Business rules not satisfied
 
+  /activities/{activityId}/attendance:
+    post:
+      summary: Record attendance for an activity
+      description: The secretary records attendance of members for a given activity.
+      parameters:
+        - name: activityId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAttendanceRequest"
+            examples:
+              example:
+                value:
+                  records:
+                    - member_id: 1
+                      status: PRESENT
+                    - member_id: 2
+                      status: ABSENT
+                      absence_reason: "Travel issue"
+                    - member_id: 3
+                      status: EXCUSED
+                      absence_reason: "Medical appointment"
+      responses:
+        "201":
+          description: Attendance recorded successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AttendanceResponse"
+        "400":
+          description: Invalid request
+        "403":
+          description: Only secretary allowed
+        "422":
+          description: Business rules not satisfied
+
 components:
   schemas:
     CreateCollectivityRequest:
@@ -856,3 +898,57 @@ components:
         created_at:
           type: string
           format: date-time
+
+    CreateAttendanceRequest:
+      type: object
+      required:
+        - records
+      properties:
+        records:
+          type: array
+          items:
+            type: object
+            required:
+              - member_id
+              - status
+            properties:
+              member_id:
+                type: integer
+              status:
+                type: string
+                enum:
+                  - PRESENT
+                  - ABSENT
+                  - EXCUSED
+              absence_reason:
+                type: string
+                nullable: true
+
+    AttendanceResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        activity_id:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        records:
+          type: array
+          items:
+            type: object
+            properties:
+              member_id:
+                type: integer
+              status:
+                type: string
+                enum:
+                  - PRESENT
+                  - ABSENT
+                  - EXCUSED
+              absence_reason:
+                type: string
+                nullable: true
+              is_counted_in_attendance_rate:
+                type: boolean
