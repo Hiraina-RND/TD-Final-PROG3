@@ -1,14 +1,15 @@
-create table collectivity
+create table collectivities
 (
     id                  varchar(255) primary key,
     name                varchar(255),
+    number              int,
     location            varchar(255) not null,
     federation_approval boolean default false
 );
 
 create type gender_type_enum as enum('MALE', 'FEMALE');
 
-create table member
+create table members
 (
     id         varchar(255) primary key,
     first_name varchar(255) not null,
@@ -23,21 +24,37 @@ create table member
 
 create type occupation_type_enum as enum('JUNIOR','SENIOR', 'SECRETARY', 'TREASURER', 'VICE_PRESIDENT', 'PRESIDENT');
 
-create table collectivity_member
-(
-    id serial       primary key,
-    member_id       varchar(255) references member(id) not null,
-    collectivity_id varchar(255) references collectivity(id) not null,
-    occupation            occupation_type_enum not null
+create table mandates (
+    id int primary key,
+    year integer,
+    collectivity_id varchar(255) references collectivity(id) not null
 );
 
-ALTER TABLE collectivity_member
-ADD CONSTRAINT unique_member_collectivity
-UNIQUE (member_id, collectivity_id);
+create table mandate_members (
+    id int primary key,
+    member_id varchar(255) references member(id) not null,
+    mandate_id int references mandate(id) not null,
+    occupation occupation_type_enum not null
+);
 
 create table referees
 (
     id          serial primary key,
-    member_id   varchar(255) references member(id),
-    referee_id  varchar(255) references member(id)
+    member_id   varchar(255) references member(id) not null,
+    referee_id  varchar(255) references member(id) not null,
+    relation_type varchar(255)
+);
+
+create type frequencyTypeEnum as enum('WEEKLY', 'MONTHLY', 'ANNUALLY', 'PUNCTUALLY');
+
+create type statusTypeEnum as enum('ACTIVE', 'INACTIVE');
+
+create table membership_fees (
+    id varchar(255) primary key,
+    eligible_from date,
+    frequency frequencyTypeEnum not null,
+    amount decimal,
+    label text,
+    status statusTypeEnum not null,
+    collectivity_id varchar(255) references collectivity(id)
 );
