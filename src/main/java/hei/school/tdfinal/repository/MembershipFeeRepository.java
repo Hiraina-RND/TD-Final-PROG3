@@ -1,9 +1,9 @@
 package hei.school.tdfinal.repository;
 
-import hei.school.tdfinal.entity.Collectivity;
 import hei.school.tdfinal.entity.FrequencyTypeEnum;
 import hei.school.tdfinal.entity.MembershipFee;
 import hei.school.tdfinal.entity.MembershipFeeStatusEnum;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class MembershipFeeRepository {
     private final Connection connection;
 
@@ -30,7 +31,7 @@ public class MembershipFeeRepository {
                     msf.label,
                     msf.status,
                     msf.collectivity_id
-                from membership_fees
+                from membership_fees msf
                 where msf.collectivity_id = ?
                 """;
 

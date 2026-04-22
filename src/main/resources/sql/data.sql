@@ -1,4 +1,4 @@
-INSERT INTO member (id, first_name, last_name, birth_date, gender, address, profession, phone_number, email)
+INSERT INTO members (id, first_name, last_name, birth_date, gender, address, profession, phone_number, email)
 VALUES
     ('M1', 'Jean', 'Rakoto', '1995-01-10', 'MALE', 'Antananarivo', 'Engineer', '034001', 'jean@mail.com'),
     ('M2', 'Marie', 'Rabe', '1996-02-12', 'FEMALE', 'Antsirabe', 'Teacher', '034002', 'marie@mail.com'),
@@ -10,3 +10,15 @@ VALUES
     ('M8', 'Sophie', 'Lala', '1992-08-22', 'FEMALE', 'Antsirabe', 'Architect', '034008', 'sophie@mail.com'),
     ('M9', 'Nina', 'Solo', '1990-09-30', 'FEMALE', 'Toamasina', 'Journalist', '034009', 'nina@mail.com'),
     ('M10', 'David', 'Rana', '1991-10-05', 'MALE', 'Mahajanga', 'Developer', '034010', 'david@mail.com');
+
+INSERT INTO collectivities (id, name, number, location, federation_approval)
+VALUES  ('col1', 'Collectivité Riz Alaotra', 1, 'Toamasina', true),
+        ('col2', 'Collectivité Vanille SAVA', 2, 'Antalaha', true),
+        ('col3', 'Collectivité Cafe SAVA', 3, 'Antalaha', true);
+
+INSERT INTO membership_fees (id, eligible_from, frequency, amount, label, status, collectivity_id)
+VALUES  ('mf1', '2026-01-01', 'MONTHLY', 5000, 'Cotisation mensuelle', 'ACTIVE', 'col1'),
+        ('mf2', '2026-01-01', 'ANNUALLY', 50000, 'Cotisation annuelle', 'ACTIVE', 'col1'),
+        ('mf3', '2026-02-01', 'MONTHLY', 3000, 'Cotisation mensuelle réduite', 'INACTIVE', 'col1'),
+        ('mf4', '2026-01-01', 'MONTHLY', 7000, 'Cotisation mensuelle', 'ACTIVE', 'col2'),
+        ('mf5', '2026-03-01', 'PUNCTUALLY', 10000, 'Cotisation exceptionnelle formation', 'ACTIVE', 'col2');

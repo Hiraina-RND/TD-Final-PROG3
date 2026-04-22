@@ -27,21 +27,21 @@ create type occupation_type_enum as enum('JUNIOR','SENIOR', 'SECRETARY', 'TREASU
 create table mandates (
     id int primary key,
     year integer,
-    collectivity_id varchar(255) references collectivity(id) not null
+    collectivity_id varchar(255) references collectivities(id) not null
 );
 
 create table mandate_members (
     id int primary key,
-    member_id varchar(255) references member(id) not null,
-    mandate_id int references mandate(id) not null,
+    member_id varchar(255) references members(id) not null,
+    mandate_id int references mandates(id) not null,
     occupation occupation_type_enum not null
 );
 
 create table referees
 (
     id          serial primary key,
-    member_id   varchar(255) references member(id) not null,
-    referee_id  varchar(255) references member(id) not null,
+    member_id   varchar(255) references members(id) not null,
+    referee_id  varchar(255) references members(id) not null,
     relation_type varchar(255)
 );
 
@@ -56,5 +56,5 @@ create table membership_fees (
     amount decimal,
     label text,
     status statusTypeEnum not null,
-    collectivity_id varchar(255) references collectivity(id)
+    collectivity_id varchar(255) references collectivities(id)
 );

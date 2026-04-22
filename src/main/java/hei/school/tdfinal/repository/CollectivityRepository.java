@@ -1,6 +1,5 @@
 package hei.school.tdfinal.repository;
 
-import hei.school.tdfinal.dto.CreateCollectivityDto;
 import hei.school.tdfinal.entity.*;
 import org.springframework.stereotype.Repository;
 
@@ -42,8 +41,8 @@ public class CollectivityRepository {
 
     public Collectivity findById(String id) {
         String sql = """
-            SELECT id, location, federation_approval
-            FROM collectivity
+            SELECT id, name, number, location, federation_approval
+            FROM collectivities
             WHERE id = ?
         """;
 
