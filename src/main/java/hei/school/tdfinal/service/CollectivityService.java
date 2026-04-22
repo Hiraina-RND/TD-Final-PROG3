@@ -3,7 +3,9 @@ package hei.school.tdfinal.service;
 import hei.school.tdfinal.dto.CollectivityResponseDto;
 import hei.school.tdfinal.dto.CollectivityResponseStructureDto;
 import hei.school.tdfinal.dto.CreateCollectivityDto;
+import hei.school.tdfinal.dto.CreateMemberPaymentDto;
 import hei.school.tdfinal.entity.Member;
+import hei.school.tdfinal.entity.MemberPayment;
 import hei.school.tdfinal.entity.OccupationEnum;
 import hei.school.tdfinal.exception.BadRequestException;
 import hei.school.tdfinal.exception.NotFoundException;
@@ -155,6 +157,10 @@ public class CollectivityService {
         if (memberRepository.findById(memberId) == null) {
             throw new NotFoundException("Member not found: " + memberId);
         }
+    }
+
+    public List<MemberPayment> createMemberPayments(String id, List<CreateMemberPaymentDto> dtos) {
+        return List.of();
     }
 
     record ValidatedCollectivity(
