@@ -24,6 +24,15 @@ create table members
 
 create type occupation_type_enum as enum('JUNIOR','SENIOR', 'SECRETARY', 'TREASURER', 'VICE_PRESIDENT', 'PRESIDENT');
 
+create table collectivity_member (
+    id serial primary key,
+    member_id varchar(255) not null,
+    collectivity_id varchar(255) not null,
+    occupation occupation_type_enum,
+    foreign key (member_id) references members(id),
+    foreign key (collectivity_id) references collectivities(id)
+);
+
 create table mandates (
     id int primary key,
     year integer,
@@ -31,7 +40,7 @@ create table mandates (
 );
 
 create table mandate_members (
-    id int primary key,
+    id serial primary key,
     member_id varchar(255) references members(id) not null,
     mandate_id int references mandates(id) not null,
     occupation occupation_type_enum not null

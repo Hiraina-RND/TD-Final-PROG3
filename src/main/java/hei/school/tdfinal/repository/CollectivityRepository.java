@@ -19,7 +19,7 @@ public class CollectivityRepository {
 
     public String insert(String location, Boolean federationApproval) {
         String sql = """
-            INSERT INTO collectivity (id, location, federation_approval)
+            INSERT INTO collectivities (id, location, federation_approval)
             VALUES (?, ?, ?)
         """;
 
@@ -75,7 +75,7 @@ public class CollectivityRepository {
     ) {
         String sql = """
         SELECT 1
-        FROM collectivity c
+        FROM collectivities c
         JOIN collectivity_member cm1 ON cm1.collectivity_id = c.id
         JOIN collectivity_member cm2 ON cm2.collectivity_id = c.id
         JOIN collectivity_member cm3 ON cm3.collectivity_id = c.id
