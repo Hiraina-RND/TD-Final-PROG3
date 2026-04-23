@@ -57,11 +57,36 @@ public class CollectivityRepository {
                 collectivity.setId(rs.getString("id"));
                 collectivity.setLocation(rs.getString("location"));
                 collectivity.setFederation_approval(rs.getBoolean("federation_approval"));
+                collectivity.setName(rs.getString("name"));
+                collectivity.setNumber(rs.getString("number"));
 
                 return collectivity;
             }
 
             return null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Collectivity update(String id, String name, String number) {
+        String sql = """
+        UPDATE collectivity 
+        SET name = ?, number = ? 
+        WHERE id = ?
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, name);
+            ps.setString(2, number);
+            ps.setString(3, id);
+
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected == 0) {
+                return null;
+            }
+
+            return findById(id);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

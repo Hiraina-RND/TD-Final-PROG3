@@ -1,9 +1,7 @@
 package hei.school.tdfinal.service;
 
-import hei.school.tdfinal.dto.CollectivityResponseDto;
-import hei.school.tdfinal.dto.CollectivityResponseStructureDto;
-import hei.school.tdfinal.dto.CreateCollectivityDto;
-import hei.school.tdfinal.dto.CreateMemberPaymentDto;
+import hei.school.tdfinal.dto.*;
+import hei.school.tdfinal.entity.Collectivity;
 import hei.school.tdfinal.entity.Member;
 import hei.school.tdfinal.entity.MemberPayment;
 import hei.school.tdfinal.entity.OccupationEnum;
@@ -161,6 +159,24 @@ public class CollectivityService {
 
     public List<MemberPayment> createMemberPayments(String id, List<CreateMemberPaymentDto> dtos) {
         return List.of();
+    }
+
+    public Collectivity updateInformations(String id, UpdateCollectivityInfoDto info) {
+        Collectivity updated = collectivityRepository.update(id, info.getName(), info.getNumber());
+
+        if (updated == null) {
+            throw new NotFoundException("Collectivity not found");
+        }
+
+        return updated;
+    }
+
+    public Collectivity findById(String id) {
+        Collectivity collectivity = collectivityRepository.findById(id);
+        if (collectivity == null) {
+            throw new NotFoundException("Collectivity not found");
+        }
+        return collectivity;
     }
 
     record ValidatedCollectivity(
