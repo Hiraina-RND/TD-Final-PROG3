@@ -12,7 +12,9 @@ import hei.school.tdfinal.repository.CollectivityRepository;
 import hei.school.tdfinal.repository.MembershipFeeRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,6 +64,28 @@ public class MembershipFeeService {
         Collectivity collectivity = collectivityRepository.findById(collectivityId);
         if (collectivity == null) {
             throw new NotFoundException("Collectivity not found.");
+        }
+
+        Set<String> seen = new HashSet<>();
+
+        for (CreateMembershipFeeDto dto : membershipFeeDtos) {
+            String key = dto.getEligibleFrom() + "|" +
+                    dto.getFrequency() + "|" +
+                    dto.getAmount() + "|" +
+                    dto.getLabel();
+
+            if (!seen.add(key)) {
+                throw new BadRequestException("Duplicate membership fee in request.");
+            }
+
+            if (membershipFeeRepository.exists(
+                    collectivityId,
+                    dto.getEligibleFrom(),
+                    dto.getFrequency(),
+                    dto.getLabel())
+            ) {
+                throw new BadRequestException("MembershipFee already exists.");
+            }
         }
 
         return membershipFeeDtos.stream()

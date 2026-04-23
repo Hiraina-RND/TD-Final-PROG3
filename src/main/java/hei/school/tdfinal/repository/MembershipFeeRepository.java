@@ -137,4 +137,35 @@ public class MembershipFeeRepository {
             throw new RuntimeException(e);
         }
     }
+
+    public boolean exists(
+            String collectivityId,
+            LocalDate eligibleFrom,
+            FrequencyTypeEnum frequency,
+            String label
+    ) {
+        String sql = """
+        select 1
+        from membership_fees
+        where collectivity_id = ?
+        and eligible_from = ?
+        and frequency = ?::frequencyTypeEnum
+        and label = ?
+        limit 1
+        """;
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, collectivityId);
+            ps.setDate(2, Date.valueOf(eligibleFrom));
+            ps.setString(3, frequency.name());
+            ps.setString(4, label);
+
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
