@@ -1,13 +1,24 @@
 package hei.school.tdfinal.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "member")
 public class Member {
+    @Id
     private String id;
     private String firstName;
     private String lastName;
     private LocalDate birthDate;
+
+    @Enumerated(EnumType.STRING)
     private GenderEnum gender;
+
     private String adress;
     private String profession;
     private String phoneNumber;

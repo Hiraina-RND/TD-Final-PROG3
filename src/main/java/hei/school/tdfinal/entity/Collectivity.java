@@ -6,13 +6,15 @@ import java.util.Objects;
 public class Collectivity {
     private String id;
     private String name;
+    private String number;
     private String location;
     private Boolean federation_approval;
     private List<CollectivityMember> collectivityMembers;
 
-    public Collectivity(String id, String name, String location, Boolean federation_approval, List<CollectivityMember> collectivityMembers) {
+    public Collectivity(String id, String name, String number, String location, Boolean federation_approval, List<CollectivityMember> collectivityMembers) {
         this.id = id;
         this.name = name;
+        this.number = number;
         this.location = location;
         this.federation_approval = federation_approval;
         this.collectivityMembers = collectivityMembers;
@@ -35,6 +37,14 @@ public class Collectivity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
     }
 
     public String getLocation() {
