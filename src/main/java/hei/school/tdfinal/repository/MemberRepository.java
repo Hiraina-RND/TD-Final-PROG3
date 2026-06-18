@@ -28,7 +28,7 @@ public class MemberRepository {
                    profession,
                    phone_number,
                    email
-            FROM member
+            FROM members
             WHERE id = ?
         """;
 
